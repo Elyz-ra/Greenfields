@@ -1,6 +1,5 @@
-// Greenfields/screens/TambahAuditScreen.js
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, Picker, DatePickerIOS, ScrollView } from 'react-native';
+import { View, Text, Button, TextInput, Picker, ScrollView, Platform, DatePickerIOS } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TambahAuditScreen = ({ navigation }) => {
@@ -12,8 +11,17 @@ const TambahAuditScreen = ({ navigation }) => {
 
   const handleSaveAudit = async () => {
     try {
-      // Implementasi penyimpanan data audit secara lokal (gunakan AsyncStorage atau database lokal)
-      // ...
+      // Buat objek data audit
+      const auditData = {
+        judulTemuan,
+        areaAudit,
+        tanggalAudit: tanggalAudit.toISOString(), // Konversi tanggal ke format ISO string
+        tanggalClose: tanggalClose.toISOString(),
+        userAuditor,
+      };
+
+      // Simpan data audit ke penyimpanan lokal
+      await AsyncStorage.setItem('auditData', JSON.stringify(auditData));
 
       // Setelah penyimpanan selesai, kembali ke halaman menu utama atau lakukan aksi lainnya
       navigation.navigate('MainMenu');
@@ -42,18 +50,22 @@ const TambahAuditScreen = ({ navigation }) => {
         </Picker>
 
         <Text>Tanggal Audit:</Text>
-        <DatePickerIOS
-          date={tanggalAudit}
-          onDateChange={(date) => setTanggalAudit(date)}
-          mode="date"
-        />
+        {Platform.OS === 'ios' && (
+          <DatePickerIOS
+            date={tanggalAudit}
+            onDateChange={(date) => setTanggalAudit(date)}
+            mode="date"
+          />
+        )}
 
         <Text>Tanggal Close:</Text>
-        <DatePickerIOS
-          date={tanggalClose}
-          onDateChange={(date) => setTanggalClose(date)}
-          mode="date"
-        />
+        {Platform.OS === 'ios' && (
+          <DatePickerIOS
+            date={tanggalClose}
+            onDateChange={(date) => setTanggalClose(date)}
+            mode="date"
+          />
+        )}
 
         <Text>User Auditor: {userAuditor}</Text>
 
